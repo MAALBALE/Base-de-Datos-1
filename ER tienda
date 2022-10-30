@@ -1,0 +1,194 @@
+-- MySQL Workbench Forward Engineering
+
+SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
+SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
+SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
+
+-- -----------------------------------------------------
+-- Schema Primer_proyecto
+-- -----------------------------------------------------
+-- Projecto Base de Datos1
+
+-- -----------------------------------------------------
+-- Schema Primer_proyecto
+--
+-- Projecto Base de Datos1
+-- -----------------------------------------------------
+CREATE SCHEMA IF NOT EXISTS `Primer_proyecto` DEFAULT CHARACTER SET utf8 COLLATE utf8_bin ;
+USE `Primer_proyecto` ;
+
+-- -----------------------------------------------------
+-- Table `Primer_proyecto`.`Pais`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `Primer_proyecto`.`Pais` (
+  `idPais` VARCHAR(50) NOT NULL,
+  PRIMARY KEY (`idPais`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `Primer_proyecto`.`Categoria`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `Primer_proyecto`.`Categoria` (
+  `idCategoria` INT(50) NOT NULL,
+  `Nivel` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`idCategoria`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `Primer_proyecto`.`Oficina_Regional`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `Primer_proyecto`.`Oficina_Regional` (
+  `idOficina_Regional` INT(50) NOT NULL,
+  `Oficina_Regionalcol` VARCHAR(45) NULL,
+  `Pais_idPais` VARCHAR(50) NOT NULL,
+  `Categoria_idCategoria` INT NOT NULL,
+  PRIMARY KEY (`idOficina_Regional`, `Pais_idPais`, `Categoria_idCategoria`),
+  INDEX `fk_Oficina_Regional_Categoria1_idx` (`Categoria_idCategoria` ASC) VISIBLE,
+  CONSTRAINT `fk_Oficina_Regional_Categoria1`
+    FOREIGN KEY (`Categoria_idCategoria`)
+    REFERENCES `Primer_proyecto`.`Categoria` (`idCategoria`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+COMMENT = '			';
+
+
+-- -----------------------------------------------------
+-- Table `Primer_proyecto`.`Distribuidora`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `Primer_proyecto`.`Distribuidora` (
+  `idDistribuidora` INT(50) NOT NULL,
+  `NombreD` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`idDistribuidora`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `Primer_proyecto`.`Ubicacion_Geografica`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `Primer_proyecto`.`Ubicacion_Geografica` (
+  `idUbicacion_Geografica` VARCHAR(50) NOT NULL,
+  `Departamento` VARCHAR(45) NULL,
+  `Estado_o_Provincia` VARCHAR(45) NULL,
+  `Ciudad` VARCHAR(45) NULL,
+  `Zona` VARCHAR(45) NULL,
+  `Calle` VARCHAR(45) NULL,
+  `Avenida` VARCHAR(45) NULL,
+  `No_Domicilio` INT(10) NULL,
+  `Pais_idPais` VARCHAR(50) NOT NULL,
+  `Oficina_Regional_idOficina_Regional` INT(50) NOT NULL,
+  `Oficina_Regional_Pais_idPais` VARCHAR(50) NOT NULL,
+  `Oficina_Regional_Categoria_idCategoria` INT NOT NULL,
+  `Distribuidora_idDistribuidora` INT(50) NOT NULL,
+  PRIMARY KEY (`idUbicacion_Geografica`, `Pais_idPais`, `Oficina_Regional_idOficina_Regional`, `Oficina_Regional_Pais_idPais`, `Oficina_Regional_Categoria_idCategoria`, `Distribuidora_idDistribuidora`),
+  INDEX `fk_Ubicacion_Geografica_Pais1_idx` (`Pais_idPais` ASC) VISIBLE,
+  INDEX `fk_Ubicacion_Geografica_Oficina_Regional1_idx` (`Oficina_Regional_idOficina_Regional` ASC, `Oficina_Regional_Pais_idPais` ASC, `Oficina_Regional_Categoria_idCategoria` ASC) VISIBLE,
+  INDEX `fk_Ubicacion_Geografica_Distribuidora1_idx` (`Distribuidora_idDistribuidora` ASC) VISIBLE,
+  CONSTRAINT `fk_Ubicacion_Geografica_Pais1`
+    FOREIGN KEY (`Pais_idPais`)
+    REFERENCES `Primer_proyecto`.`Pais` (`idPais`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Ubicacion_Geografica_Oficina_Regional1`
+    FOREIGN KEY (`Oficina_Regional_idOficina_Regional` , `Oficina_Regional_Pais_idPais` , `Oficina_Regional_Categoria_idCategoria`)
+    REFERENCES `Primer_proyecto`.`Oficina_Regional` (`idOficina_Regional` , `Pais_idPais` , `Categoria_idCategoria`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Ubicacion_Geografica_Distribuidora1`
+    FOREIGN KEY (`Distribuidora_idDistribuidora`)
+    REFERENCES `Primer_proyecto`.`Distribuidora` (`idDistribuidora`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `Primer_proyecto`.`Marca`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `Primer_proyecto`.`Marca` (
+  `idMarca` INT(30) NOT NULL,
+  PRIMARY KEY (`idMarca`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `Primer_proyecto`.`Ventas`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `Primer_proyecto`.`Ventas` (
+  `idVentas` INT(50) NOT NULL,
+  `Cantidad` VARCHAR(45) NOT NULL,
+  `Total_venta` VARCHAR(45) NOT NULL,
+  `Oficina_Regional_idOficina_Regional` INT(50) NOT NULL,
+  `Oficina_Regional_Pais_idPais` VARCHAR(50) NOT NULL,
+  `Oficina_Regional_Categoria_idCategoria` INT NOT NULL,
+  PRIMARY KEY (`idVentas`, `Oficina_Regional_idOficina_Regional`, `Oficina_Regional_Pais_idPais`, `Oficina_Regional_Categoria_idCategoria`),
+  INDEX `fk_Ventas_Oficina_Regional1_idx` (`Oficina_Regional_idOficina_Regional` ASC, `Oficina_Regional_Pais_idPais` ASC, `Oficina_Regional_Categoria_idCategoria` ASC) VISIBLE,
+  CONSTRAINT `fk_Ventas_Oficina_Regional1`
+    FOREIGN KEY (`Oficina_Regional_idOficina_Regional` , `Oficina_Regional_Pais_idPais` , `Oficina_Regional_Categoria_idCategoria`)
+    REFERENCES `Primer_proyecto`.`Oficina_Regional` (`idOficina_Regional` , `Pais_idPais` , `Categoria_idCategoria`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `Primer_proyecto`.`Producto`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `Primer_proyecto`.`Producto` (
+  `idProducto` INT(25) NOT NULL,
+  `Nombre` VARCHAR(45) NULL,
+  `Tipo` VARCHAR(45) NULL,
+  `Marca_idMarca` INT(30) NOT NULL,
+  `Precio` INT(10) NOT NULL,
+  `Ventas_idVentas` INT(50) NOT NULL,
+  `Distribuidora_idDistribuidora` INT(50) NOT NULL,
+  PRIMARY KEY (`idProducto`, `Marca_idMarca`, `Ventas_idVentas`, `Distribuidora_idDistribuidora`),
+  INDEX `fk_Producto_Marca1_idx` (`Marca_idMarca` ASC) VISIBLE,
+  INDEX `fk_Producto_Ventas1_idx` (`Ventas_idVentas` ASC) VISIBLE,
+  INDEX `fk_Producto_Distribuidora1_idx` (`Distribuidora_idDistribuidora` ASC) VISIBLE,
+  CONSTRAINT `fk_Producto_Marca1`
+    FOREIGN KEY (`Marca_idMarca`)
+    REFERENCES `Primer_proyecto`.`Marca` (`idMarca`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Producto_Ventas1`
+    FOREIGN KEY (`Ventas_idVentas`)
+    REFERENCES `Primer_proyecto`.`Ventas` (`idVentas`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Producto_Distribuidora1`
+    FOREIGN KEY (`Distribuidora_idDistribuidora`)
+    REFERENCES `Primer_proyecto`.`Distribuidora` (`idDistribuidora`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `Primer_proyecto`.`Clientes`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `Primer_proyecto`.`Clientes` (
+  `idClientes` INT(50) NOT NULL,
+  `Nombre` VARCHAR(45) NOT NULL,
+  `Apellido` VARCHAR(45) NOT NULL,
+  `Tipo` VARCHAR(45) NOT NULL,
+  `Preferencias` VARCHAR(45) NOT NULL,
+  `Oficina_Regional_idOficina_Regional` INT(50) NOT NULL,
+  `Oficina_Regional_Pais_idPais` VARCHAR(50) NOT NULL,
+  `Oficina_Regional_Categoria_idCategoria` INT NOT NULL,
+  PRIMARY KEY (`idClientes`, `Oficina_Regional_idOficina_Regional`, `Oficina_Regional_Pais_idPais`, `Oficina_Regional_Categoria_idCategoria`),
+  INDEX `fk_Clientes_Oficina_Regional1_idx` (`Oficina_Regional_idOficina_Regional` ASC, `Oficina_Regional_Pais_idPais` ASC, `Oficina_Regional_Categoria_idCategoria` ASC) VISIBLE,
+  CONSTRAINT `fk_Clientes_Oficina_Regional1`
+    FOREIGN KEY (`Oficina_Regional_idOficina_Regional` , `Oficina_Regional_Pais_idPais` , `Oficina_Regional_Categoria_idCategoria`)
+    REFERENCES `Primer_proyecto`.`Oficina_Regional` (`idOficina_Regional` , `Pais_idPais` , `Categoria_idCategoria`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+SET SQL_MODE=@OLD_SQL_MODE;
+SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
+SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
+
