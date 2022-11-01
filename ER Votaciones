@@ -1,0 +1,202 @@
+-- MySQL Workbench Forward Engineering
+
+SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
+SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
+SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
+
+-- -----------------------------------------------------
+-- Schema Proyecto_Votaciones
+-- -----------------------------------------------------
+
+-- -----------------------------------------------------
+-- Schema Proyecto_Votaciones
+-- -----------------------------------------------------
+CREATE SCHEMA IF NOT EXISTS `Proyecto_Votaciones` DEFAULT CHARACTER SET utf8 ;
+USE `Proyecto_Votaciones` ;
+
+-- -----------------------------------------------------
+-- Table `Proyecto_Votaciones`.`Tipo_eleccion`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `Proyecto_Votaciones`.`Tipo_eleccion` (
+  `idTipo_eleccion` INT(45) NOT NULL,
+  `Tipo_eleccionN` VARCHAR(45) NULL,
+  PRIMARY KEY (`idTipo_eleccion`))
+ENGINE = InnoDB;
+INSERT INTO tipo_eleccion (idtipo_eleccion,Tipo_eleccionN) values (1, 'Presidente');
+select * from tipo_eleccion;
+
+-- -----------------------------------------------------
+-- Table `Proyecto_Votaciones`.`Departamento`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `Proyecto_Votaciones`.`Departamento` (
+  `idDepartamento` INT(45) NOT NULL,
+  `Nombre_dep` VARCHAR(45) NOT NULL,
+  `Tipo_eleccion_idTipo_eleccion` INT(45) NOT NULL,
+  PRIMARY KEY (`idDepartamento`, `Tipo_eleccion_idTipo_eleccion`),
+  INDEX `fk_Departamento_Tipo_eleccion1_idx` (`Tipo_eleccion_idTipo_eleccion` ASC) VISIBLE,
+  CONSTRAINT `fk_Departamento_Tipo_eleccion1`
+    FOREIGN KEY (`Tipo_eleccion_idTipo_eleccion`)
+    REFERENCES `Proyecto_Votaciones`.`Tipo_eleccion` (`idTipo_eleccion`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+insert into Departamento(idDepartamento, Nombre_dep) values (001, 'Peten');
+
+select * from Departamento
+
+-- -----------------------------------------------------
+-- Table `Proyecto_Votaciones`.`Municipio`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `Proyecto_Votaciones`.`Municipio` (
+  `idMunicipio` INT(45) NOT NULL,
+  `Nombre_mun` VARCHAR(45) NOT NULL,
+  `Departamento_idDepartamento` INT(45) NOT NULL,
+  `Departamento_Tipo_eleccion_idTipo_eleccion` INT(45) NOT NULL,
+  PRIMARY KEY (`idMunicipio`, `Departamento_idDepartamento`, `Departamento_Tipo_eleccion_idTipo_eleccion`),
+  INDEX `fk_Municipio_Departamento1_idx` (`Departamento_idDepartamento` ASC, `Departamento_Tipo_eleccion_idTipo_eleccion` ASC) VISIBLE,
+  CONSTRAINT `fk_Municipio_Departamento1`
+    FOREIGN KEY (`Departamento_idDepartamento` , `Departamento_Tipo_eleccion_idTipo_eleccion`)
+    REFERENCES `Proyecto_Votaciones`.`Departamento` (`idDepartamento` , `Tipo_eleccion_idTipo_eleccion`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `Proyecto_Votaciones`.`Centro`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `Proyecto_Votaciones`.`Centro` (
+  `idCentro` INT(15) NOT NULL,
+  `Centro_votacioncol` VARCHAR(45) NOT NULL,
+  `Municipio_idMunicipio` INT(45) NOT NULL,
+  `Municipio_Departamento_idDepartamento` INT(45) NOT NULL,
+  `Municipio_Departamento_Tipo_eleccion_idTipo_eleccion` INT(45) NOT NULL,
+  PRIMARY KEY (`idCentro`, `Municipio_idMunicipio`, `Municipio_Departamento_idDepartamento`, `Municipio_Departamento_Tipo_eleccion_idTipo_eleccion`),
+  INDEX `fk_Centro_Municipio1_idx` (`Municipio_idMunicipio` ASC, `Municipio_Departamento_idDepartamento` ASC, `Municipio_Departamento_Tipo_eleccion_idTipo_eleccion` ASC) VISIBLE,
+  CONSTRAINT `fk_Centro_Municipio1`
+    FOREIGN KEY (`Municipio_idMunicipio` , `Municipio_Departamento_idDepartamento` , `Municipio_Departamento_Tipo_eleccion_idTipo_eleccion`)
+    REFERENCES `Proyecto_Votaciones`.`Municipio` (`idMunicipio` , `Departamento_idDepartamento` , `Departamento_Tipo_eleccion_idTipo_eleccion`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `Proyecto_Votaciones`.`Mesa`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `Proyecto_Votaciones`.`Mesa` (
+  `idMesa` INT(45) NOT NULL,
+  `Votos` INT(45) NOT NULL,
+  `Centro_idCentro` INT(15) NOT NULL,
+  `Centro_Municipio_idMunicipio` INT(45) NOT NULL,
+  `Centro_Municipio_Departamento_idDepartamento` INT(45) NOT NULL,
+  `Centro_Municipio_Departamento_Tipo_eleccion_idTipo_eleccion` INT(45) NOT NULL,
+  PRIMARY KEY (`idMesa`, `Centro_idCentro`, `Centro_Municipio_idMunicipio`, `Centro_Municipio_Departamento_idDepartamento`, `Centro_Municipio_Departamento_Tipo_eleccion_idTipo_eleccion`),
+  INDEX `fk_Mesa_Centro1_idx` (`Centro_idCentro` ASC, `Centro_Municipio_idMunicipio` ASC, `Centro_Municipio_Departamento_idDepartamento` ASC, `Centro_Municipio_Departamento_Tipo_eleccion_idTipo_eleccion` ASC) VISIBLE,
+  CONSTRAINT `fk_Mesa_Centro1`
+    FOREIGN KEY (`Centro_idCentro` , `Centro_Municipio_idMunicipio` , `Centro_Municipio_Departamento_idDepartamento` , `Centro_Municipio_Departamento_Tipo_eleccion_idTipo_eleccion`)
+    REFERENCES `Proyecto_Votaciones`.`Centro` (`idCentro` , `Municipio_idMunicipio` , `Municipio_Departamento_idDepartamento` , `Municipio_Departamento_Tipo_eleccion_idTipo_eleccion`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `Proyecto_Votaciones`.`Votantes`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `Proyecto_Votaciones`.`Votantes` (
+  `idVotantes` INT(45) NOT NULL,
+  `Nombres` VARCHAR(45) NOT NULL,
+  `Apellidos` VARCHAR(45) NOT NULL,
+  `DPI` INT(13) NOT NULL,
+  `No_Padron` INT(25) NOT NULL,
+  `Mesa_idMesa` INT(45) NOT NULL,
+  PRIMARY KEY (`idVotantes`, `Mesa_idMesa`),
+  INDEX `fk_Votantes_Mesa1_idx` (`Mesa_idMesa` ASC) VISIBLE,
+  CONSTRAINT `fk_Votantes_Mesa1`
+    FOREIGN KEY (`Mesa_idMesa`)
+    REFERENCES `Proyecto_Votaciones`.`Mesa` (`idMesa`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `Proyecto_Votaciones`.`Presidente`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `Proyecto_Votaciones`.`Presidente` (
+  `idPresidente` INT(10) NOT NULL,
+  `Nombres` VARCHAR(45) NOT NULL,
+  `Apellidos` VARCHAR(45) NOT NULL,
+  `Edad` INT(2) NOT NULL,
+  `DPI` INT(13) NOT NULL,
+  PRIMARY KEY (`idPresidente`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `Proyecto_Votaciones`.`Vice_Presidente`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `Proyecto_Votaciones`.`Vice_Presidente` (
+  `idVice_Presidente` INT(10) NOT NULL,
+  `Nombres` VARCHAR(45) NOT NULL,
+  `Apellidos` VARCHAR(45) NOT NULL,
+  `Edad` INT(2) NOT NULL,
+  `DPI` INT(13) NOT NULL,
+  PRIMARY KEY (`idVice_Presidente`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `Proyecto_Votaciones`.`Partido`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `Proyecto_Votaciones`.`Partido` (
+  `idPartido` INT(45) NOT NULL,
+  `Nombre_partido` VARCHAR(45) NOT NULL,
+  `Presidente_idPresidente` INT(10) NOT NULL,
+  `Vice_Presidente_idVice_Presidente` INT(10) NOT NULL,
+  PRIMARY KEY (`idPartido`, `Presidente_idPresidente`, `Vice_Presidente_idVice_Presidente`),
+  INDEX `fk_Partido_Presidente1_idx` (`Presidente_idPresidente` ASC) VISIBLE,
+  INDEX `fk_Partido_Vice_Presidente1_idx` (`Vice_Presidente_idVice_Presidente` ASC) VISIBLE,
+  CONSTRAINT `fk_Partido_Presidente1`
+    FOREIGN KEY (`Presidente_idPresidente`)
+    REFERENCES `Proyecto_Votaciones`.`Presidente` (`idPresidente`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Partido_Vice_Presidente1`
+    FOREIGN KEY (`Vice_Presidente_idVice_Presidente`)
+    REFERENCES `Proyecto_Votaciones`.`Vice_Presidente` (`idVice_Presidente`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `Proyecto_Votaciones`.`Resultados`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `Proyecto_Votaciones`.`Resultados` (
+  `idResultados` INT(45) NOT NULL,
+  `Mesa_idMesa` INT(45) NOT NULL,
+  `Partido_idPartido` INT(45) NOT NULL,
+  `Partido_Presidente_idPresidente` INT(10) NOT NULL,
+  `Partido_Vice_Presidente_idVice_Presidente` INT(10) NOT NULL,
+  PRIMARY KEY (`Mesa_idMesa`, `idResultados`, `Partido_idPartido`, `Partido_Presidente_idPresidente`, `Partido_Vice_Presidente_idVice_Presidente`),
+  INDEX `fk_Resultados_Mesa1_idx` (`Mesa_idMesa` ASC) VISIBLE,
+  INDEX `fk_Resultados_Partido1_idx` (`Partido_idPartido` ASC, `Partido_Presidente_idPresidente` ASC, `Partido_Vice_Presidente_idVice_Presidente` ASC) VISIBLE,
+  CONSTRAINT `fk_Resultados_Mesa1`
+    FOREIGN KEY (`Mesa_idMesa`)
+    REFERENCES `Proyecto_Votaciones`.`Mesa` (`idMesa`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Resultados_Partido1`
+    FOREIGN KEY (`Partido_idPartido` , `Partido_Presidente_idPresidente` , `Partido_Vice_Presidente_idVice_Presidente`)
+    REFERENCES `Proyecto_Votaciones`.`Partido` (`idPartido` , `Presidente_idPresidente` , `Vice_Presidente_idVice_Presidente`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+SET SQL_MODE=@OLD_SQL_MODE;
+SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
+SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
